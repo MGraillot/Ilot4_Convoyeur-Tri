@@ -1,0 +1,71 @@
+#include <Arduino.h>
+
+// Définir les broches du capteur TCS3200 pour l'ESP32
+#define S0 4
+#define S1 5
+#define S2 18
+#define S3 19
+#define sensorOut 21
+
+// Variables pour stocker les fréquences RGB
+int redFrequency = 0;
+int greenFrequency = 0;
+int blueFrequency = 0;
+
+void setup() {
+  // Initialiser la communication série
+  Serial.begin(115200);
+
+  // Configurer les broches du capteur comme sorties
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  pinMode(sensorOut, INPUT);
+
+  // Configurer la pleine échelle de sortie (100%)
+  digitalWrite(S0, HIGH);
+  digitalWrite(S1, LOW);
+}
+
+void loop() {
+  // Lire la fréquence pour le rouge
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, LOW);
+  delay(100); // Délai pour la stabilisation de la lecture
+  redFrequency = pulseIn(sensorOut, LOW);
+
+  // Lire la fréquence pour le vert
+  digitalWrite(S2, HIGH);
+  digitalWrite(S3, HIGH);
+  delay(100); // Délai pour la stabilisation de la lecture
+  greenFrequency = pulseIn(sensorOut, LOW);
+
+  // Lire la fréquence pour le bleu
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, HIGH);
+  delay(100); // Délai pour la stabilisation de la lecture
+  blueFrequency = pulseIn(sensorOut, LOW);
+
+  // Déterminer la couleur dominante
+  if (redFrequency < greenFrequency && redFrequency < blueFrequency) {
+    Serial.println("Couleur détectée: Rouge");
+  } else if (greenFrequency < redFrequency && greenFrequency < blueFrequency) {
+    Serial.println("Couleur détectée: Vert");
+  } else if (blueFrequency < redFrequency && blueFrequency < greenFrequency) {
+    Serial.println("Couleur détectée: Bleu");
+  } else {
+    Serial.println("Couleur indéterminée ou mixte");
+  }
+  // Afficher les valeurs RGB
+  Serial.print("Rouge: ");
+  Serial.print(redFrequency);
+  Serial.print(" Hz, Vert: ");
+  Serial.print(greenFrequency);
+  Serial.print(" Hz, Bleu: ");
+  Serial.print(blueFrequency);
+  Serial.println(" Hz");
+
+  // Pause pour stabiliser la lecture
+  delay(1000);
+}

@@ -1,0 +1,62 @@
+#include <Arduino.h>
+
+// Définir les broches du capteur TCS3200 pour l'ESP32
+#define S0 4
+#define S1 5
+#define S2 18
+#define S3 19
+#define sensorOut 21
+
+// Variables pour stocker les fréquences RGB
+int redFrequency = 0;
+int blueFrequency = 0;
+
+// Variables pour la calibration
+int redMax = 0, blueMax = 0; // Valeurs maximales avec surface blanche
+int redMin = 0, blueMin = 0; // Valeurs minimales avec surface noire
+
+// Fonction pour lire la fréquence du capteur pour une couleur spécifique
+int getFrequency(int pin, int s2, int s3) {
+  digitalWrite(S2, s2);
+  digitalWrite(S3, s3);
+  delay(100); // Délai pour la stabilisation de la lecture
+  return pulseIn(pin, LOW);
+}
+
+void setup() {
+  // Initialiser la communication série a 115200
+  Serial.begin(115200);
+
+  // Configurer les broches du capteur comme sorties et le capteur en entree
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  pinMode(sensorOut, INPUT);
+
+  // Configurer la pleine échelle de sortie (100%)
+  digitalWrite(S0, HIGH);
+  digitalWrite(S1, LOW);
+  delay(5000);
+  Serial.println("Placez une surface blanche devant le capteur.");
+  delay(10000); // Temps pour placer la surface blanche
+
+  redMax = getFrequency(sensorOut, LOW, LOW);
+  blueMax = getFrequency(sensorOut, LOW, HIGH);
+
+  Serial.print("Max Rouge: "); Serial.println(redMax);
+  Serial.print("Max Bleu: "); Serial.println(blueMax);
+
+  Serial.println("Placez une surface noire devant le capteur.");
+  delay(10000); // Temps pour placer la surface noire
+
+  redMin = getFrequency(sensorOut, LOW, LOW);
+  blueMin = getFrequency(sensorOut, LOW, HIGH);
+
+  Serial.print("Min Rouge: "); Serial.println(redMin);
+  Serial.print("Min Bleu: "); Serial.println(blueMin);
+}
+
+void loop() {
+  // Code pour la calibration est exécuté dans setup()
+}
