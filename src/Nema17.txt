@@ -1,0 +1,24 @@
+#include <Arduino.h>
+#include <AccelStepper.h>
+
+// Définition des broches pour le pilote du moteur pas à pas
+#define DIR_PIN 33
+#define STEP_PIN 32
+
+// Création d'une instance de AccelStepper pour contrôler le moteur pas à pas
+AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
+
+void setup()
+{
+  Serial.begin(115200);
+  pinMode(DIR_PIN, OUTPUT);
+  pinMode(STEP_PIN, OUTPUT);
+
+  stepper.setMaxSpeed(1000); // Définition de la vitesse maxi du moteur
+  stepper.setSpeed(200);    // Démarrer le moteur à une vitesse constante
+}
+
+void loop()
+{
+  stepper.runSpeed(); // Faire tourner le moteur en continu à la vitesse définie
+}
