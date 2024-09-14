@@ -1,11 +1,11 @@
 #include <Arduino.h>
 
 // Définir les broches du capteur TCS3200 pour l'ESP32
-#define S0 4
+#define S0 18
 #define S1 5
-#define S2 18
-#define S3 19
-#define sensorOut 21
+#define S2 17
+#define S3 16
+#define sensorOut 26
 
 // Variables pour stocker les fréquences RGB
 int redFrequency = 0;
